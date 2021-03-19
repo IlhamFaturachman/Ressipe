@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:ngabflutter/homepage.dart';
 import 'package:ngabflutter/signup.dart';
+import 'package:ngabflutter/func.dart';
+
+// class Func {
+//   final String email;
+//   final String password;
+
+//   Func({
+//     this.email,
+//     this.password,
+//   });
+// }
 
 class LoginPage extends StatefulWidget {
   @override
@@ -8,8 +19,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+  String emailInput;
+  String passwordInput;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,10 +29,9 @@ class _LoginPageState extends State<LoginPage> {
           title: Center(child: Text("DouDes-Login")),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.more_vert),
+              icon: Icon(Icons.person),
               onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (v) => Signup()));
+                goToSignup(context);
               },
             ),
           ],
@@ -43,7 +54,9 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 padding: EdgeInsets.all(20),
                 child: TextField(
-                  controller: email,
+                  onChanged: (text) {
+                    emailInput = text;
+                  },
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.person),
                     border: OutlineInputBorder(
@@ -55,7 +68,9 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 padding: EdgeInsets.all(20),
                 child: TextField(
-                  controller: password,
+                  onChanged: (text) {
+                    passwordInput = text;
+                  },
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.lock),
                     border: OutlineInputBorder(
@@ -73,8 +88,11 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.red,
                   child: Text("Login"),
                   onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (v) => Home()));
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => Home(
+                              email: emailInput,
+                              password: passwordInput,
+                            )));
                   },
                 ),
               ),

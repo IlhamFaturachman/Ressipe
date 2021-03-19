@@ -1,17 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ngabflutter/func.dart';
 import 'package:ngabflutter/login_page.dart';
-
-class Func {
-  final String email;
-  final String name;
-  final String password;
-
-  Func({
-    this.email,
-    this.name,
-    this.password,
-  });
-}
+import 'package:ngabflutter/login_page.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -19,9 +9,9 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  String emailInput;
-  String nameInput;
-  String passwordInput;
+  // String emailInput;
+  // String nameInput;
+  // String passwordInput;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +27,9 @@ class _SignupState extends State<Signup> {
                 child: Container(
                   padding: EdgeInsets.all(20),
                   child: TextField(
-                    onChanged: (val) {
-                      emailInput = val;
-                    },
+                    // onChanged: (val) {
+                    //   emailInput = val;
+                    // },
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.email),
                       border: OutlineInputBorder(
@@ -54,9 +44,9 @@ class _SignupState extends State<Signup> {
                 child: Container(
                   padding: EdgeInsets.all(20),
                   child: TextField(
-                    onChanged: (val) {
-                      nameInput = val;
-                    },
+                    // onChanged: (val) {
+                    //   nameInput = val;
+                    // },
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.person),
                       border: OutlineInputBorder(
@@ -71,9 +61,9 @@ class _SignupState extends State<Signup> {
                 child: Container(
                   padding: EdgeInsets.all(20),
                   child: TextField(
-                    onChanged: (val) {
-                      passwordInput = val;
-                    },
+                    // onChanged: (val) {
+                    //   passwordInput = val;
+                    // },
                     obscureText: true,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.lock),
@@ -93,10 +83,7 @@ class _SignupState extends State<Signup> {
                   color: Colors.red,
                   child: Text("Login"),
                   onPressed: () {
-                    // events.add(Func(
-                    // email: emailInput,
-                    // name: nameInput,
-                    // password: passwordInput));
+                    goToLogin(context);
                   },
                 ),
               ),

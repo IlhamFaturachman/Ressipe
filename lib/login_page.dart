@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ngabflutter/homepage.dart';
+import 'package:ngabflutter/signup.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -12,7 +14,16 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("DouDes-Login"),
+          title: Center(child: Text("DouDes-Login")),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.more_vert),
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (v) => Signup()));
+              },
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -59,10 +70,11 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.all(10),
                 child: RaisedButton(
                   textColor: Colors.white,
-                  color: Colors.blue,
+                  color: Colors.red,
                   child: Text("Login"),
                   onPressed: () {
-                    //bapak
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (v) => Home()));
                   },
                 ),
               ),

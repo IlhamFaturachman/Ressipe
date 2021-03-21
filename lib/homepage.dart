@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:ngabflutter/func.dart';
 
 class Home extends StatefulWidget {
   String email;
@@ -12,6 +16,31 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List users = [];
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    this.fetchUser();
+  }
+
+  fetchUser() async {
+    var url = Uri.parse("https://reqres.in/api/users");
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var items = json.decode(response.body)['data'];
+      print(items);
+      setState(() {
+        users = items;
+      });
+    } else {
+      setState(() {
+        users = [];
+      });
+    }
+  }
+
   String email;
   String password;
 
@@ -23,56 +52,16 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: Center(child: Text("Home")),
       ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(50),
-            child: Text(
-              "Welcome",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 40),
-            ),
-          ),
-          Container(
-            child: Center(
-              child: Text(
-                email,
-                style: TextStyle(
-                    color: Colors.red,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 20.0),
-              ),
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(50),
-            child: Text(
-              "Your Password Is",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 30),
-            ),
-          ),
-          Container(
-            child: Center(
-              child: Text(
-                password,
-                style: TextStyle(
-                    color: Colors.red,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 20.0),
-              ),
-            ),
-          )
-        ],
-      ),
+      body: getBody(),
     );
+  }
+
+  Widget getBody() {
+    List items = ["1", "2"];
+    return ListView.builder(
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          return getCard(users[index]);
+        });
   }
 }

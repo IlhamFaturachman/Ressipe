@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ngabflutter/homepage.dart';
-import 'package:ngabflutter/signup.dart';
 import 'package:ngabflutter/func.dart';
 
 // class Func {
@@ -27,14 +26,6 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
         appBar: AppBar(
           title: Center(child: Text("DouDes-Login")),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.person),
-              onPressed: () {
-                goToSignup(context);
-              },
-            ),
-          ],
         ),
         body: SingleChildScrollView(
           child: Column(

@@ -9,51 +9,58 @@ class MyTerminal extends StatefulWidget {
   _MyTerminalState createState() => _MyTerminalState();
 }
 
-void goToLogin(BuildContext context) {
+Widget goToLogin(context) {
   Navigator.pushReplacement(
-      context,
-      new MaterialPageRoute(
-          builder: (BuildContext context) => new LoginPage()));
+      context, MaterialPageRoute(builder: (c) => LoginPage()));
 }
 
 Widget getCard(index) {
   var fullName = index['first_name'] + "" + index['last_name'];
   var email = index['email'];
   var avatar = index['avatar'];
-  return Card(
-    child: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: ListTile(
-          title: Row(
-        children: <Widget>[
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(30),
-                image: DecorationImage(
-                    fit: BoxFit.cover, image: NetworkImage(avatar.toString()))),
-          ),
-          SizedBox(width: 20),
-          Column(
-            children: <Widget>[
-              Center(
-                child: Text(fullName.toString(),
-                    style: TextStyle(fontSize: 15, color: Colors.black)),
-              ),
-              SizedBox(height: 10),
-              Center(
-                child: Text(email.toString(),
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey,
-                        fontStyle: FontStyle.italic)),
-              ),
-            ],
-          )
-        ],
-      )),
+
+  return Padding(
+    padding: const EdgeInsets.all(10.0),
+    child: Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ListTile(
+            title: Row(
+          children: <Widget>[
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(30),
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(avatar.toString()))),
+            ),
+            SizedBox(width: 20),
+            Column(
+              children: <Widget>[
+                Center(
+                  child: Text(fullName.toString(),
+                      style: TextStyle(fontSize: 15, color: Colors.black)),
+                ),
+                SizedBox(height: 10),
+                Center(
+                  child: Text(email.toString(),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic)),
+                ),
+              ],
+            ),
+            // Row(
+            //   crossAxisAlignment: CrossAxisAlignment.end,
+            //   children: <Widget>[Icon(Icons.person_add)],
+            // ),
+          ],
+        )),
+      ),
     ),
   );
 }

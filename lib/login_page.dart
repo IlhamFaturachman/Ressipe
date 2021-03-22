@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.all(10),
                 child: RaisedButton(
                   textColor: Colors.white,
-                  color: Colors.red,
+                  color: Colors.lightBlue,
                   child: Text("Login"),
                   onPressed: () {
                     Navigator.of(context).pushReplacement(MaterialPageRoute(

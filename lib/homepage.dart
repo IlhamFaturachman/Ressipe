@@ -50,6 +50,13 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                goToLogin(context);
+              })
+        ],
         title: Center(child: Text("Home")),
       ),
       body: getBody(),

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "139420830855",
+    "project_id": "ressipe-bfd7d",
+    "storage_bucket": "ressipe-bfd7d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139420830855:android:c2c6c33ba6b92b06cfbc22",
+        "android_client_info": {
+          "package_name": "com.example.ngabflutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "139420830855-dqe88d2o2l18d6f17sgotlu3q0q2ppnf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPkXaBMogTaoJV2TaVsbn1oSYgFpeNT8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "139420830855-dqe88d2o2l18d6f17sgotlu3q0q2ppnf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

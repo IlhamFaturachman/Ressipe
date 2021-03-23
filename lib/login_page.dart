@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ngabflutter/homepage.dart';
 import 'package:ngabflutter/func.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 // class Func {
 //   final String email;
@@ -18,6 +20,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _auth = FirebaseAuth.instance;
+
+  bool showProgress = false;
+
   String emailInput;
   String passwordInput;
 
@@ -45,8 +51,8 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 padding: EdgeInsets.all(20),
                 child: TextField(
-                  onChanged: (text) {
-                    emailInput = text;
+                  onChanged: (value) {
+                    emailInput = value;
                   },
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.person),
@@ -59,8 +65,8 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 padding: EdgeInsets.all(20),
                 child: TextField(
-                  onChanged: (text) {
-                    passwordInput = text;
+                  onChanged: (value) {
+                    passwordInput = value;
                   },
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.lock),
@@ -76,17 +82,34 @@ class _LoginPageState extends State<LoginPage> {
                 width: 150,
                 padding: EdgeInsets.all(10),
                 child: RaisedButton(
-                  textColor: Colors.white,
-                  color: Colors.lightBlue,
-                  child: Text("Login"),
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => Home(
-                              email: emailInput,
-                              password: passwordInput,
-                            )));
-                  },
-                ),
+                    textColor: Colors.white,
+                    color: Colors.lightBlue,
+                    child: Text("Login"),
+                    onPressed: () async {
+                      setState(() {
+                        showProgress = true;
+                      });
+                      try {
+                        final newuser =
+                            await _auth.createUserWithEmailAndPassword(
+                                email: emailInput, password: passwordInput);
+                        if (newuser != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                          );
+                          setState(() {
+                            showProgress = false;
+                          });
+                        }
+                      } catch (e) {}
+                      //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      //       builder: (context) => Home(
+                      //             email: emailInput,
+                      //             password: passwordInput,
+                      //           )));
+                    }),
               ),
               SizedBox(
                 height: 125,

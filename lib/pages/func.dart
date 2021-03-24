@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'package:ngabflutter/homepage.dart';
+import 'package:ngabflutter/pages/homepage.dart';
+import 'package:ngabflutter/pages/home.dart';
 import 'package:flutter/material.dart';
-import 'package:ngabflutter/login_page.dart';
+import 'package:ngabflutter/pages/login_page.dart';
 import 'package:http/http.dart' as http;
 
 class MyTerminal extends StatefulWidget {
@@ -12,6 +13,11 @@ class MyTerminal extends StatefulWidget {
 Widget goToLogin(context) {
   Navigator.pushReplacement(
       context, MaterialPageRoute(builder: (c) => LoginPage()));
+}
+
+Widget goToHome(context) {
+  Navigator.pushReplacement(
+      context, MaterialPageRoute(builder: (c) => HomeKu()));
 }
 
 Widget getCard(index) {

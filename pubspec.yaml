@@ -40,6 +40,8 @@ dev_dependencies:
   cloud_firestore: ^1.0.2
   flutter_progress_hud: ^2.0.0
   fluttertoast: ^8.0.3
+  firebase_database: ^6.1.0
+  shared_preferences: ^2.0.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

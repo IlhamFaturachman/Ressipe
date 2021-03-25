@@ -16,10 +16,10 @@ class _HomeKuState extends State<HomeKu> {
       appBar: AppBar(
         title: Text(
           "Home",
-          style: TextStyle(fontSize: 18, color: Colors.black),
+          style: TextStyle(fontSize: 18, color: Colors.white),
         ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+        elevation: 10,
+        backgroundColor: Colors.black,
         actions: [
           Padding(
             padding: EdgeInsets.all(8.0),

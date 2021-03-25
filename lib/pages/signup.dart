@@ -22,118 +22,143 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          iconTheme: IconThemeData(color: Colors.deepPurple),
-          title: Text(
-            'Sign-Up',
-            style: TextStyle(color: Colors.deepPurple),
-          ),
-          centerTitle: true,
-        ),
+        // appBar: AppBar(
+        //   // backgroundColor: Colors.transparent,
+        //   // elevation: 0,
+        //   iconTheme: IconThemeData(color: Colors.deepPurple),
+        //   title: Text(
+        //     'Sign-Up',
+        //     style: TextStyle(color: Colors.black),
+        //   ),
+        //   centerTitle: true,
+        // ),
         body: SingleChildScrollView(
-            child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 70.0),
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    controller: _emailConn,
-                    validator: (val) {
-                      if (val.isEmpty) {
-                        return "Kosong Goblok";
-                      } else
-                        return null;
-                    },
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      labelText: "Email",
-                    ),
-                  ),
+            child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [Colors.blueGrey, Colors.lightBlueAccent]),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 0.0),
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  child: TextFormField(
-                    obscureText: true,
-                    controller: _passConn,
-                    validator: (val) {
-                      if (val.isEmpty) {
-                        return "Kosong Goblok";
-                      } else
-                        return null;
-                    },
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      labelText: "Password",
-                    ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(85),
+                        child: Text(
+                          "DouDes",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 40),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 70.0),
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          child: TextFormField(
+                            controller: _emailConn,
+                            validator: (val) {
+                              if (val.isEmpty) {
+                                return "Kosong Goblok";
+                              }
+                              if (val.length < 2) {
+                                return "Kurang Goblok";
+                              } else
+                                return null;
+                            },
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.email),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              labelText: "Email",
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 0.0),
+                        child: Container(
+                          padding: EdgeInsets.all(20),
+                          child: TextFormField(
+                            obscureText: true,
+                            controller: _passConn,
+                            validator: (val) {
+                              if (val.isEmpty) {
+                                return "Kosong Goblok";
+                              }
+                              if (val.length < 6) {
+                                return "Kurang Goblok";
+                              } else
+                                return null;
+                            },
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.lock),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              labelText: "Password",
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 70,
+                        width: 150,
+                        padding: EdgeInsets.all(10),
+                        child: RaisedButton(
+                            textColor: Colors.white,
+                            color: Colors.deepPurple,
+                            child: Text("Sign-Up"),
+                            onPressed: () {
+                              if (_formKey.currentState.validate()) {
+                                registerEmailPass();
+                              }
+                            }
+                            // onPressed: () async {
+                            //   setState(() {
+                            //     showProgress = true;
+                            //   });
+                            //   try {
+                            //     final newuser =
+                            //         await _auth.createUserWithEmailAndPassword(
+                            //             email: emailInput, password: passwordInput);
+                            //     if (newuser != null) {
+                            //       Navigator.pushReplacement(
+                            //         context,
+                            //         MaterialPageRoute(builder: (context) => LoginPage()),
+                            //       );
+                            //       setState(() {
+                            //         showProgress = false;
+                            //       });
+                            //     }
+                            //   } catch (e) {}
+                            // },
+                            ),
+                      ),
+                      Text("Or"),
+                      Container(
+                          height: 70,
+                          width: 150,
+                          padding: EdgeInsets.all(10),
+                          child: RaisedButton(
+                              textColor: Colors.white,
+                              color: Colors.lightBlue,
+                              child: Text("Login"),
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginPage()));
+                              })),
+                      // Navigator.of(context)
+                      //       .push(MaterialPageRoute(builder: (v) => Signup()));
+                    ],
                   ),
-                ),
-              ),
-              Container(
-                height: 70,
-                width: 150,
-                padding: EdgeInsets.all(10),
-                child: RaisedButton(
-                    textColor: Colors.white,
-                    color: Colors.deepPurple,
-                    child: Text("Sign-Up"),
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        registerEmailPass();
-                      }
-                    }
-                    // onPressed: () async {
-                    //   setState(() {
-                    //     showProgress = true;
-                    //   });
-                    //   try {
-                    //     final newuser =
-                    //         await _auth.createUserWithEmailAndPassword(
-                    //             email: emailInput, password: passwordInput);
-                    //     if (newuser != null) {
-                    //       Navigator.pushReplacement(
-                    //         context,
-                    //         MaterialPageRoute(builder: (context) => LoginPage()),
-                    //       );
-                    //       setState(() {
-                    //         showProgress = false;
-                    //       });
-                    //     }
-                    //   } catch (e) {}
-                    // },
-                    ),
-              ),
-              Text("Or"),
-              Container(
-                  height: 70,
-                  width: 150,
-                  padding: EdgeInsets.all(10),
-                  child: RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.lightBlue,
-                      child: Text("Login"),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-                      })),
-              // Navigator.of(context)
-              //       .push(MaterialPageRoute(builder: (v) => Signup()));
-            ],
-          ),
-        )));
+                ))));
   }
 
   void registerEmailPass() async {

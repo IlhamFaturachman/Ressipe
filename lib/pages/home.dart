@@ -13,70 +13,81 @@ class _HomeKuState extends State<HomeKu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Home",
-          style: TextStyle(fontSize: 18, color: Colors.white),
-        ),
-        elevation: 10,
-        backgroundColor: Colors.black,
-        actions: [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(Icons.search),
+        appBar: AppBar(
+          title: Text(
+            "Home",
+            style: TextStyle(fontSize: 18, color: Colors.black),
           ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(Icons.notifications),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Icon(Icons.more_vert),
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text('Kawand'),
-              accountEmail: Text('Kawand@gmail.com'),
-              decoration: BoxDecoration(color: Colors.blueAccent),
+          elevation: 10,
+          backgroundColor: Colors.white,
+          actions: [
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.search),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ListTile(
-                leading: Icon(Icons.account_circle),
-                title: Text('Drawer layout Item 1'),
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.notifications),
+            ),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.more_vert),
+            ),
+          ],
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                accountName: Text('Kawand'),
+                accountEmail: Text('Kawand@gmail.com'),
+                decoration: BoxDecoration(color: Colors.blueAccent),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ListTile(
+                  leading: Icon(Icons.account_circle),
+                  title: Text('Drawer layout Item 1'),
+                  onTap: () {
+                    //bapak
+                  },
+                ),
+              ),
+              Divider(
+                height: 10.0,
+              ),
+              ListTile(
+                leading: Icon(Icons.accessibility),
+                title: Text('Drawer layout Item 2'),
+                onTap: () {
+                  //Bapak
+                },
+              ),
+              Divider(
+                height: 10.0,
+              ),
+              ListTile(
+                leading: Icon(Icons.account_box),
+                title: Text('Drawer layout Item 3'),
                 onTap: () {
                   //bapak
                 },
-              ),
-            ),
-            Divider(
-              height: 10.0,
-            ),
-            ListTile(
-              leading: Icon(Icons.accessibility),
-              title: Text('Drawer layout Item 2'),
-              onTap: () {
-                //Bapak
-              },
-            ),
-            Divider(
-              height: 10.0,
-            ),
-            ListTile(
-              leading: Icon(Icons.account_box),
-              title: Text('Drawer layout Item 3'),
-              onTap: () {
-                //bapak
-              },
-            )
-          ],
+              )
+            ],
+          ),
         ),
-      ),
-    );
+        body: GridView.builder(
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+            itemBuilder: (_, home) {
+              return Container(
+                margin: EdgeInsets.all(10),
+                height: 150,
+                color: Colors.grey[200],
+              );
+            }),
+        floatingActionButton:
+            FloatingActionButton(child: Icon(Icons.add), onPressed: () {}));
   }
 }

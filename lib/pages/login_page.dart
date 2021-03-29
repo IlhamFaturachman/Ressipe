@@ -23,8 +23,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  String _error;
-
   final AuthService _auth = AuthService();
 
   TextEditingController _emailConn = TextEditingController();
@@ -55,7 +53,6 @@ class _LoginPageState extends State<LoginPage> {
                   key: _formKey,
                   child: Column(
                     children: <Widget>[
-                      showAlert(),
                       Container(
                         alignment: Alignment.center,
                         padding: EdgeInsets.all(93),
@@ -137,44 +134,13 @@ class _LoginPageState extends State<LoginPage> {
   void signInUser() async {
     dynamic authResult = await _auth.newLogin(_emailConn.text, _passConn.text);
     if (authResult == null) {
-      print(authResult.toString());
+      print('Failed : ${authResult.code}');
+      print(authResult.message);
     } else {
       _emailConn.clear();
       _passConn.clear();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomeKu()));
     }
-  }
-
-  Widget showAlert() {
-    if (_error != null) {
-      return Container(
-        color: Colors.amberAccent,
-        width: double.infinity,
-        padding: EdgeInsets.all(8.0),
-        child: Row(
-          children: <Widget>[
-            Icon(Icons.error_outline),
-            Expanded(
-              child: Text(
-                _error,
-                maxLines: 3,
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                setState(() {
-                  _error = null;
-                });
-              },
-            )
-          ],
-        ),
-      );
-    }
-    return SizedBox(
-      height: 0,
-    );
   }
 }

@@ -165,7 +165,7 @@ class _SignupState extends State<Signup> {
     dynamic result =
         await _auth.registerEmailPass(_emailConn.text, _passConn.text);
     if (result == null) {
-      print("email Isn't Valid");
+      print("email isnt valid");
     } else {
       print(result.toString());
       _emailConn.clear();

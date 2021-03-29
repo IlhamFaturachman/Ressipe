@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ngabflutter/backend/auth.dart';
+import 'package:ngabflutter/pages/signup.dart';
 
 class HomeKu extends StatefulWidget {
   @override
@@ -16,10 +18,10 @@ class _HomeKuState extends State<HomeKu> {
         appBar: AppBar(
           title: Text(
             "Home",
-            style: TextStyle(fontSize: 18, color: Colors.black),
+            style: TextStyle(fontSize: 18, color: Colors.white),
           ),
           elevation: 10,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.black,
           actions: [
             Padding(
               padding: EdgeInsets.all(8.0),
@@ -68,10 +70,12 @@ class _HomeKuState extends State<HomeKu> {
                 height: 10.0,
               ),
               ListTile(
-                leading: Icon(Icons.account_box),
-                title: Text('Drawer layout Item 3'),
-                onTap: () {
-                  //bapak
+                leading: Icon(Icons.exit_to_app),
+                title: Text('Logout'),
+                onTap: () async {
+                  await _auth.signOut();
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Signup()));
                 },
               )
             ],

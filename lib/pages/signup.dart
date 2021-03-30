@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ngabflutter/backend/auth.dart';
-import 'package:ngabflutter/pages/func.dart';
 import 'package:ngabflutter/pages/login_page.dart';
+import 'package:ngabflutter/pages/home.dart';
 import 'package:ngabflutter/pages/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ngabflutter/pages/login_page.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -12,12 +13,12 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  final _formKey = GlobalKey<FormState>();
+  String email;
+  String password;
+
+  final formkey = GlobalKey<FormState>();
 
   final AuthService _auth = AuthService();
-
-  TextEditingController _emailConn = TextEditingController();
-  TextEditingController _passConn = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class _SignupState extends State<Signup> {
                       colors: [Colors.blueGrey, Colors.lightBlueAccent]),
                 ),
                 child: Form(
-                  key: _formKey,
+                  key: formkey,
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -61,7 +62,6 @@ class _SignupState extends State<Signup> {
                         child: Container(
                           padding: EdgeInsets.all(20),
                           child: TextFormField(
-                            controller: _emailConn,
                             validator: (val) {
                               if (val.isEmpty) {
                                 return "Kosong Goblok";
@@ -70,6 +70,9 @@ class _SignupState extends State<Signup> {
                                 return "Kurang Goblok";
                               } else
                                 return null;
+                            },
+                            onChanged: (val) {
+                              email = val;
                             },
                             decoration: InputDecoration(
                               prefixIcon: Icon(Icons.email),
@@ -86,15 +89,14 @@ class _SignupState extends State<Signup> {
                           padding: EdgeInsets.all(20),
                           child: TextFormField(
                             obscureText: true,
-                            controller: _passConn,
-                            validator: (val) {
-                              if (val.isEmpty) {
-                                return "Kosong Goblok";
-                              }
-                              if (val.length < 6) {
-                                return "Kurang Goblok";
-                              } else
-                                return null;
+                            validator: MultiValidator([
+                              RequiredValidator(
+                                  errorText: "This Field Is Required."),
+                              MinLengthValidator(6,
+                                  errorText: "Minimum 6 Characters Required.")
+                            ]),
+                            onChanged: (val) {
+                              password = val;
                             },
                             decoration: InputDecoration(
                               prefixIcon: Icon(Icons.lock),
@@ -114,30 +116,27 @@ class _SignupState extends State<Signup> {
                             color: Colors.deepPurple,
                             child: Text("Sign-Up"),
                             onPressed: () {
-                              if (_formKey.currentState.validate()) {
-                                registerEmailPass();
-                              }
-                            }
-                            // onPressed: () async {
-                            //   setState(() {
-                            //     showProgress = true;
-                            //   });
-                            //   try {
-                            //     final newuser =
-                            //         await _auth.createUserWithEmailAndPassword(
-                            //             email: emailInput, password: passwordInput);
-                            //     if (newuser != null) {
-                            //       Navigator.pushReplacement(
-                            //         context,
-                            //         MaterialPageRoute(builder: (context) => LoginPage()),
-                            //       );
-                            //       setState(() {
-                            //         showProgress = false;
-                            //       });
-                            //     }
-                            //   } catch (e) {}
-                            // },
-                            ),
+                              registerEmailPass();
+                              // onPressed: () async {
+                              //   setState(() {
+                              //     showProgress = true;
+                              //   });
+                              //   try {
+                              //     final newuser =
+                              //         await _auth.createUserWithEmailAndPassword(
+                              //             email: emailInput, password: passwordInput);
+                              //     if (newuser != null) {
+                              //       Navigator.pushReplacement(
+                              //         context,
+                              //         MaterialPageRoute(builder: (context) => LoginPage()),
+                              //       );
+                              //       setState(() {
+                              //         showProgress = false;
+                              //       });
+                              //     }
+                              //   } catch (e) {}
+                              // },
+                            }),
                       ),
                       Text("Or"),
                       Container(
@@ -162,16 +161,17 @@ class _SignupState extends State<Signup> {
   }
 
   void registerEmailPass() async {
-    dynamic result =
-        await _auth.registerEmailPass(_emailConn.text, _passConn.text);
-    if (result == null) {
-      print("email isnt valid");
-    } else {
-      print(result.toString());
-      _emailConn.clear();
-      _passConn.clear();
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+    if (formkey.currentState.validate()) {
+      formkey.currentState.save();
+      _auth.signUp(email.trim(), password, context).then((value) {
+        if (value != null) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeKu(uid: value.uid),
+              ));
+        }
+      });
     }
   }
 }

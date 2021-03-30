@@ -2,15 +2,90 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ngabflutter/backend/auth.dart';
 import 'package:ngabflutter/pages/signup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomeKu extends StatefulWidget {
+  final String uid;
+
+  HomeKu({Key key, @required this.uid}) : super(key: key);
+
   @override
-  _HomeKuState createState() => _HomeKuState();
+  _HomeKuState createState() => _HomeKuState(uid);
 }
 
 class _HomeKuState extends State<HomeKu> {
-  final _auth = FirebaseAuth.instance;
-  bool showProgress = false;
+  final String uid;
+  _HomeKuState(this.uid);
+  final AuthService _auth = AuthService();
+  var taskcollections = FirebaseFirestore.instance.collection('tasks');
+  String task;
+
+  void showdialog(bool isUpdate, DocumentSnapshot ds) {
+    GlobalKey<FormState> formkey = GlobalKey<FormState>();
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: isUpdate ? Text("Update Todo") : Text("Add Todo"),
+            content: Form(
+              key: formkey,
+              autovalidate: true,
+              child: TextFormField(
+                autofocus: true,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: "Task",
+                ),
+                validator: (_val) {
+                  if (_val.isEmpty) {
+                    return "Can't Be Empty";
+                  } else {
+                    return null;
+                  }
+                },
+                onChanged: (_val) {
+                  task = _val;
+                },
+              ),
+            ),
+            actions: <Widget>[
+              RaisedButton(
+                color: Colors.purple,
+                onPressed: () {
+                  if (formkey.currentState.validate()) {
+                    formkey.currentState.save();
+                    if (isUpdate) {
+                      taskcollections
+                          .document(uid)
+                          .collection('task')
+                          .document(ds.documentID)
+                          .updateData({
+                        'task': task,
+                        'time': DateTime.now(),
+                      });
+                    } else {
+                      //  insert
+                      taskcollections.document(uid).collection('task').add({
+                        'task': task,
+                        'time': DateTime.now(),
+                      });
+                    }
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text(
+                  "Add",
+                  style: TextStyle(
+                    fontFamily: "tepeno",
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +166,14 @@ class _HomeKuState extends State<HomeKu> {
                 color: Colors.grey[200],
               );
             }),
-        floatingActionButton:
-            FloatingActionButton(child: Icon(Icons.add), onPressed: () {}));
+        floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPage(),
+                  ));
+            }));
   }
 }

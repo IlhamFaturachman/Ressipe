@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ngabflutter/pages/home.dart';
 import 'package:ngabflutter/backend/auth.dart';
-import 'package:ngabflutter/pages/homepage.dart';
-import 'package:ngabflutter/pages/func.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-// class Func {
-//   final String email;
-//   final String password;
-
-//   Func({
-//     this.email,
-//     this.password,
-//   });
-// }
+import 'package:form_field_validator/form_field_validator.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -22,25 +11,33 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final AuthService _auth = AuthService();
+  String email;
+  String password;
 
-  TextEditingController _emailConn = TextEditingController();
-  TextEditingController _passConn = TextEditingController();
+  final AuthService _auth = AuthService();
+  GlobalKey<FormState> formkey = GlobalKey<FormState>();
+
+  // void login() async {
+  //   if (formkey.currentState.validate()) {
+  //     formkey.currentState.save();
+  //     dynamic authResult =
+  //         await _auth.signin(email, password, context).then((value) {
+  //       if (authResult == null) {
+  //         print("error");
+  //       } else {
+  //         Navigator.pushReplacement(
+  //             context,
+  //             MaterialPageRoute(
+  //               builder: (context) => HomeKu(uid: value.uid),
+  //             ));
+  //       }
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //   backgroundColor: Colors.blueGrey,
-        //   elevation: 10,
-        //   iconTheme: IconThemeData(color: Colors.white),
-        //   title: Text(
-        //     'Sign-In',
-        //     style: TextStyle(color: Colors.white),
-        //   ),
-        //   centerTitle: true,
-        // ),
         body: SingleChildScrollView(
             child: Container(
                 decoration: BoxDecoration(
@@ -50,14 +47,14 @@ class _LoginPageState extends State<LoginPage> {
                       colors: [Colors.blueGrey, Colors.lightBlueAccent]),
                 ),
                 child: Form(
-                  key: _formKey,
+                  key: formkey,
                   child: Column(
                     children: <Widget>[
                       Container(
                         alignment: Alignment.center,
                         padding: EdgeInsets.all(93),
                         child: Text(
-                          "DouDes",
+                          "Ressipe",
                           style: TextStyle(
                               color: Colors.black,
                               fontStyle: FontStyle.italic,
@@ -68,16 +65,23 @@ class _LoginPageState extends State<LoginPage> {
                       Container(
                         padding: EdgeInsets.all(20),
                         child: TextFormField(
-                          controller: _emailConn,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "Kosong Goblok";
-                            }
-                            if (val.length < 2) {
-                              return "Kurang Goblok";
-                            } else
-                              return null;
+                          validator: MultiValidator([
+                            RequiredValidator(errorText: "Kosong Goblok"),
+                            EmailValidator(
+                                errorText: "Seng Genah Iki Form Email"),
+                          ]),
+                          onChanged: (val) {
+                            email = val;
                           },
+                          // validator: (val) {
+                          //   if (val.isEmpty) {
+                          //     return "Kosong Goblok";
+                          //   }
+                          //   if (val.length < 2) {
+                          //     return "Kurang Goblok";
+                          //   } else
+                          //     return null;
+                          // },
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.person),
                             border: OutlineInputBorder(
@@ -90,16 +94,22 @@ class _LoginPageState extends State<LoginPage> {
                         padding: EdgeInsets.all(20),
                         child: TextFormField(
                           obscureText: true,
-                          controller: _passConn,
-                          validator: (val) {
-                            if (val.isEmpty) {
-                              return "Kosong Goblok";
-                            }
-                            if (val.length < 6) {
-                              return "Kurang Goblok";
-                            } else
-                              return null;
+                          validator: MultiValidator([
+                            RequiredValidator(errorText: "Kosong Goblok"),
+                            MinLengthValidator(6, errorText: "Minimal 6 Char"),
+                          ]),
+                          onChanged: (val) {
+                            password = val;
                           },
+                          // validator: (val) {
+                          //   if (val.isEmpty) {
+                          //     return "Kosong Goblok";
+                          //   }
+                          //   if (val.length < 6) {
+                          //     return "Kurang Goblok";
+                          //   } else
+                          //     return null;
+                          // },
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock),
                             border: OutlineInputBorder(
@@ -132,15 +142,17 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void signInUser() async {
-    dynamic authResult = await _auth.newLogin(_emailConn.text, _passConn.text);
-    if (authResult == null) {
-      print('Failed : ${authResult.code}');
-      print(authResult.message);
-    } else {
-      _emailConn.clear();
-      _passConn.clear();
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomeKu()));
+    if (formkey.currentState.validate()) {
+      formkey.currentState.save();
+      _auth.signin(email, password, context).then((value) {
+        if (value != null) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeKu(uid: value.uid),
+              ));
+        }
+      });
     }
   }
 }

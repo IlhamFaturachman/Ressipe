@@ -39,10 +39,14 @@ dev_dependencies:
   firebase_auth: ^1.0.1
   cloud_firestore: ^1.0.2
   flutter_progress_hud: ^2.0.0
+  firebase_storage: ^8.0.1
   fluttertoast: ^8.0.3
   firebase_database: ^6.1.0
   shared_preferences: ^2.0.5
   provider: ^5.0.0
+  form_field_validator: ^1.1.0
+  image_picker: ^0.7.3
+  intl: ^0.17.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

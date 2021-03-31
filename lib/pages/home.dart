@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ngabflutter/backend/auth.dart';
 import 'package:ngabflutter/pages/signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ngabflutter/pages/AddPage.dart';
 
 class HomeKu extends StatefulWidget {
   final String uid;
@@ -16,9 +17,13 @@ class HomeKu extends StatefulWidget {
 class _HomeKuState extends State<HomeKu> {
   final String uid;
   _HomeKuState(this.uid);
+
   final AuthService _auth = AuthService();
-  var taskcollections = FirebaseFirestore.instance.collection('tasks');
-  String task;
+
+  var recipecollections = FirebaseFirestore.instance.collection('recipe');
+
+  String name;
+  String ingredient;
 
   void showdialog(bool isUpdate, DocumentSnapshot ds) {
     GlobalKey<FormState> formkey = GlobalKey<FormState>();
@@ -45,7 +50,7 @@ class _HomeKuState extends State<HomeKu> {
                   }
                 },
                 onChanged: (_val) {
-                  task = _val;
+                  name = _val;
                 },
               ),
             ),
@@ -56,19 +61,19 @@ class _HomeKuState extends State<HomeKu> {
                   if (formkey.currentState.validate()) {
                     formkey.currentState.save();
                     if (isUpdate) {
-                      taskcollections
+                      recipecollections
                           .document(uid)
-                          .collection('task')
+                          .collection('recipe')
                           .document(ds.documentID)
                           .updateData({
-                        'task': task,
-                        'time': DateTime.now(),
+                        'name': name,
+                        'ingredient': ingredient,
                       });
                     } else {
                       //  insert
-                      taskcollections.document(uid).collection('task').add({
-                        'task': task,
-                        'time': DateTime.now(),
+                      recipecollections.document(uid).collection('recipe').add({
+                        'name': name,
+                        'ingredient': ingredient,
                       });
                     }
                     Navigator.pop(context);
@@ -167,13 +172,8 @@ class _HomeKuState extends State<HomeKu> {
               );
             }),
         floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddPage(),
-                  ));
-            }));
+          child: Icon(Icons.add),
+          onPressed: () => showdialog(false, null),
+        ));
   }
 }

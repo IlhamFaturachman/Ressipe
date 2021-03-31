@@ -9,6 +9,20 @@ import 'package:provider/provider.dart';
 class AuthService {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  Stream<String> get onAuthStateChanged => auth.authStateChanges().map(
+        (User user) => user?.uid,
+      );
+
+  // GET UID
+  String getCurrentUID() {
+    return auth.currentUser.uid;
+  }
+
+  // GET CURRENT USER
+  Future getCurrentUser() async {
+    return auth.currentUser;
+  }
+
   showErrDialog(BuildContext context, String err) {
     FocusScope.of(context).requestFocus(new FocusNode());
     return showDialog(

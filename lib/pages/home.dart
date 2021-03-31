@@ -17,10 +17,30 @@ class HomeKu extends StatefulWidget {
 class _HomeKuState extends State<HomeKu> {
   final String uid;
   _HomeKuState(this.uid);
+  TextEditingController _name = TextEditingController();
+  TextEditingController _bahan = TextEditingController();
 
   final AuthService _auth = AuthService();
 
   var recipecollections = FirebaseFirestore.instance.collection('recipe');
+
+  List allRecipes = [];
+
+  Future<void> getRecipes() async {
+    await recipecollections.get().then((result) => {
+          result.docs.forEach((element) {
+            print(element.data()['name']);
+            allRecipes.add(element.data());
+          })
+        });
+  }
+
+  @override
+  initState() async {
+    await getRecipes();
+    setState(() {});
+    super.initState();
+  }
 
   String name;
   String ingredient;
@@ -34,48 +54,68 @@ class _HomeKuState extends State<HomeKu> {
           return AlertDialog(
             title: isUpdate ? Text("Update Todo") : Text("Add Todo"),
             content: Form(
-              key: formkey,
-              autovalidate: true,
-              child: TextFormField(
-                autofocus: true,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: "Task",
-                ),
-                validator: (_val) {
-                  if (_val.isEmpty) {
-                    return "Can't Be Empty";
-                  } else {
-                    return null;
-                  }
-                },
-                onChanged: (_val) {
-                  name = _val;
-                },
-              ),
-            ),
+                key: formkey,
+                autovalidate: true,
+                child: Column(children: [
+                  TextFormField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Name",
+                    ),
+                    validator: (_val) {
+                      if (_val.isEmpty) {
+                        return "Can't Be Empty";
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: _name,
+                  ),
+                  TextFormField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Task",
+                    ),
+                    validator: (_val) {
+                      if (_val.isEmpty) {
+                        return "Can't Be Empty";
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: _bahan,
+                  ),
+                ])),
             actions: <Widget>[
               RaisedButton(
                 color: Colors.purple,
-                onPressed: () {
+                onPressed: () async {
                   if (formkey.currentState.validate()) {
                     formkey.currentState.save();
-                    if (isUpdate) {
-                      recipecollections
-                          .document(uid)
-                          .collection('recipe')
-                          .document(ds.documentID)
-                          .updateData({
-                        'name': name,
-                        'ingredient': ingredient,
-                      });
-                    } else {
-                      //  insert
-                      recipecollections.document(uid).collection('recipe').add({
-                        'name': name,
-                        'ingredient': ingredient,
-                      });
-                    }
+                    User user = await FirebaseAuth.instance.currentUser;
+                    await recipecollections.add({
+                      'name': _name.text,
+                      'bahan': _bahan.text,
+                      'image': "",
+                      'author': user.email
+                    });
+
+                    // if (isUpdate) {
+                    //   recipecollections
+                    //       .collection('recipe').doc(uid)
+                    //       .updateData({
+                    //     'name': name,
+                    //     'ingredient': ingredient,
+                    //   });
+                    // } else {
+                    //   //  insert
+                    //   recipecollections.document(uid).collection('recipe').add({
+                    //     'name': name,
+                    //     'ingredient': ingredient,
+                    //   });
+                    // }
                     Navigator.pop(context);
                   }
                 },
@@ -94,6 +134,7 @@ class _HomeKuState extends State<HomeKu> {
 
   @override
   Widget build(BuildContext context) {
+    var recipesdata = recipecollections.get();
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -161,16 +202,35 @@ class _HomeKuState extends State<HomeKu> {
             ],
           ),
         ),
-        body: GridView.builder(
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-            itemBuilder: (_, home) {
-              return Container(
-                margin: EdgeInsets.all(10),
-                height: 150,
-                color: Colors.grey[200],
-              );
-            }),
+        body:
+
+            // Column(
+            //   children: [
+            //     for (var i in allRecipes)
+            //       Container(
+            //         color: Colors.yellow,
+            //         child: Text(i['name']),
+            //       )
+            //   ],
+            // ),
+
+            GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemBuilder: (_, home) {
+                  if (home < allRecipes.length) {
+                    return Container(
+                      margin: EdgeInsets.all(10),
+                      height: 150,
+                      color: Colors.grey[200],
+                      child: Column(children: [
+                        Text("Nama : " + allRecipes[home]['name'].toString()),
+                        Text("Bahan : " + allRecipes[home]['bahan'].toString()),
+                      ]),
+                    );
+                  }
+                  return Text("");
+                }),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () => showdialog(false, null),

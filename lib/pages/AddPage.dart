@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddRecipe extends StatelessWidget {
-  TextEditingController title = TextEditingController();
-  TextEditingController content = TextEditingController();
+  TextEditingController name = TextEditingController();
+  TextEditingController bahan = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference notes = firestore.collection('recipes');
+    CollectionReference recipes = firestore.collection('recipe');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.redAccent,
         actions: [
           FlatButton(
             onPressed: () {
-              notes.add({
-                'Title': title.text,
-                'Content': content.text,
+              recipes.add({
+                'name': name.text,
+                'bahan': bahan.text,
               }).whenComplete(() => Navigator.pop(context));
             },
             child: Text(
@@ -36,9 +36,9 @@ class AddRecipe extends StatelessWidget {
             Container(
               decoration: BoxDecoration(border: Border.all()),
               child: TextField(
-                controller: title,
+                controller: name,
                 decoration: InputDecoration(
-                  hintText: 'Title',
+                  hintText: 'Name',
                   contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                 ),
               ),
@@ -50,7 +50,7 @@ class AddRecipe extends StatelessWidget {
                 child: Container(
               decoration: BoxDecoration(border: Border.all()),
               child: TextField(
-                controller: content,
+                controller: bahan,
                 maxLines: null,
                 expands: true,
                 decoration: InputDecoration(

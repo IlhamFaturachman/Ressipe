@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class AuthService {
+  User user;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Stream<String> get onAuthStateChanged => auth.authStateChanges().map(
@@ -86,7 +87,7 @@ class AuthService {
     try {
       UserCredential result =
           await auth.signInWithEmailAndPassword(email: email, password: email);
-      User user = result.user;
+      user = result.user;
       // return Future.value(true);
       return Future.value(user);
     } catch (e) {

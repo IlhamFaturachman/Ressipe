@@ -6,6 +6,9 @@ import 'package:ngabflutter/backend/auth.dart';
 import 'package:ngabflutter/pages/signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+File _imageFile;
 
 class HomeKu extends StatefulWidget {
   final String uid;
@@ -17,10 +20,10 @@ class HomeKu extends StatefulWidget {
 }
 
 class _HomeKuState extends State<HomeKu> {
-  File _imageFile;
   final String uid;
-  String imageURL;
+  final picker = ImagePicker();
   _HomeKuState(this.uid);
+
   TextEditingController _name = TextEditingController();
   TextEditingController _bahan = TextEditingController();
 
@@ -46,12 +49,19 @@ class _HomeKuState extends State<HomeKu> {
     super.initState();
   }
 
-  final picker = ImagePicker();
+  Future<void> _chooseImage() async {
+    PickedFile pickedfile = await picker.getImage(source: ImageSource.gallery);
 
-  Future<void> pickImage() async {
-    File pickedFile = await setState(() {
-      _imageFile = pickedFile as File;
+    setState(() {
+      _imageFile = File(pickedfile.path);
     });
+  }
+
+  void _uploadImage() {
+    String ImageFileName = DateTime.now().millisecondsSinceEpoch.toString();
+    final Reference storageReference =
+        FirebaseStorage.instance.ref().child('Images').child(ImageFileName);
+    final UploadTask uploadtask = storageReference.putFile(_imageFile);
   }
 
   void showdialog(bool isUpdate, DocumentSnapshot ds) {
@@ -236,12 +246,6 @@ class _HomeKuState extends State<HomeKu> {
                       height: 150,
                       color: Colors.grey[200],
                       child: Column(children: [
-                        (imageURL != null)
-                            ? Image.network(imageURL)
-                            : Placeholder(
-                                fallbackHeight: 200.0,
-                                fallbackWidth: double.infinity,
-                              ),
                         Text("Nama : " + allRecipes[home]['name'].toString()),
                         Text("Bahan : " + allRecipes[home]['bahan'].toString()),
                       ]),

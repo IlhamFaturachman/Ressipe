@@ -15,24 +15,6 @@ class _LoginPageState extends State<LoginPage> {
   final AuthService _auth = AuthService();
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-  // void login() async {
-  //   if (formkey.currentState.validate()) {
-  //     formkey.currentState.save();
-  //     dynamic authResult =
-  //         await _auth.signin(email, password, context).then((value) {
-  //       if (authResult == null) {
-  //         print("error");
-  //       } else {
-  //         Navigator.pushReplacement(
-  //             context,
-  //             MaterialPageRoute(
-  //               builder: (context) => HomeKu(uid: value.uid),
-  //             ));
-  //       }
-  //     });
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,15 +53,6 @@ class _LoginPageState extends State<LoginPage> {
                           onChanged: (val) {
                             email = val;
                           },
-                          // validator: (val) {
-                          //   if (val.isEmpty) {
-                          //     return "Kosong Goblok";
-                          //   }
-                          //   if (val.length < 2) {
-                          //     return "Kurang Goblok";
-                          //   } else
-                          //     return null;
-                          // },
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.person),
                             border: OutlineInputBorder(
@@ -99,15 +72,6 @@ class _LoginPageState extends State<LoginPage> {
                           onChanged: (val) {
                             password = val;
                           },
-                          // validator: (val) {
-                          //   if (val.isEmpty) {
-                          //     return "Kosong Goblok";
-                          //   }
-                          //   if (val.length < 6) {
-                          //     return "Kurang Goblok";
-                          //   } else
-                          //     return null;
-                          // },
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock),
                             border: OutlineInputBorder(

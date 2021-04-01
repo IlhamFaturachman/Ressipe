@@ -20,16 +20,6 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //   // backgroundColor: Colors.transparent,
-        //   // elevation: 0,
-        //   iconTheme: IconThemeData(color: Colors.deepPurple),
-        //   title: Text(
-        //     'Sign-Up',
-        //     style: TextStyle(color: Colors.black),
-        //   ),
-        //   centerTitle: true,
-        // ),
         body: SingleChildScrollView(
             child: Container(
                 decoration: BoxDecoration(
@@ -114,25 +104,6 @@ class _SignupState extends State<Signup> {
                             child: Text("Sign-Up"),
                             onPressed: () {
                               registerEmailPass();
-                              // onPressed: () async {
-                              //   setState(() {
-                              //     showProgress = true;
-                              //   });
-                              //   try {
-                              //     final newuser =
-                              //         await _auth.createUserWithEmailAndPassword(
-                              //             email: emailInput, password: passwordInput);
-                              //     if (newuser != null) {
-                              //       Navigator.pushReplacement(
-                              //         context,
-                              //         MaterialPageRoute(builder: (context) => LoginPage()),
-                              //       );
-                              //       setState(() {
-                              //         showProgress = false;
-                              //       });
-                              //     }
-                              //   } catch (e) {}
-                              // },
                             }),
                       ),
                       Text("Or"),
@@ -150,8 +121,6 @@ class _SignupState extends State<Signup> {
                                     MaterialPageRoute(
                                         builder: (context) => LoginPage()));
                               })),
-                      // Navigator.of(context)
-                      //       .push(MaterialPageRoute(builder: (v) => Signup()));
                     ],
                   ),
                 ))));

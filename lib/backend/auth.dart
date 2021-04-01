@@ -65,17 +65,6 @@ class AuthService {
     }
   }
 
-  // Future registerEmailPass(String email, String password) async {
-  //   try {
-  //     UserCredential result = await auth.createUserWithEmailAndPassword(
-  //         email: email, password: password);
-  //     User user = result.user;
-  //     return user;
-  //   } on FirebaseAuthException catch (e) {
-  //     return e.message;
-  //   }
-  // }
-
   //SignIn
 
   Future<User> signin(
@@ -112,15 +101,6 @@ class AuthService {
       return Future.value(null);
     }
   }
-  // Future<User> newLogin(String email, String password) async {
-  //   try {
-  //     UserCredential result = await _auth.signInWithEmailAndPassword(
-  //         email: email, password: password);
-  //     return result.user;
-  //   } on FirebaseAuthException catch (e) {
-  //     return e.toString();
-  //   }
-  // }
 
   //SignOut
 

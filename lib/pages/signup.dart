@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ngabflutter/backend/auth.dart';
 import 'package:ngabflutter/pages/login_page.dart';
 import 'package:ngabflutter/pages/home.dart';
-import 'package:ngabflutter/pages/signup.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ngabflutter/pages/login_page.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 class Signup extends StatefulWidget {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ngabflutter/backend/auth.dart';
 import 'package:ngabflutter/pages/signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ngabflutter/pages/AddPage.dart';
 
 class HomeKu extends StatefulWidget {
   final String uid;
@@ -52,7 +51,7 @@ class _HomeKuState extends State<HomeKu> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: isUpdate ? Text("Update Todo") : Text("Add Todo"),
+            title: isUpdate ? Text("Update Todo") : Text("Add Recipe"),
             content: Form(
                 key: formkey,
                 autovalidate: true,
@@ -76,7 +75,7 @@ class _HomeKuState extends State<HomeKu> {
                     autofocus: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: "Task",
+                      labelText: "Bahan Bahan",
                     ),
                     validator: (_val) {
                       if (_val.isEmpty) {

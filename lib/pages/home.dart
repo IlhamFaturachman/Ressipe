@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ngabflutter/backend/auth.dart';
@@ -7,8 +5,7 @@ import 'package:ngabflutter/pages/signup.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
-File _imageFile;
+import 'dart:io';
 
 class HomeKu extends StatefulWidget {
   final String uid;
@@ -23,6 +20,7 @@ class _HomeKuState extends State<HomeKu> {
   final String uid;
   final picker = ImagePicker();
   _HomeKuState(this.uid);
+  File _imageFile;
 
   TextEditingController _name = TextEditingController();
   TextEditingController _bahan = TextEditingController();
@@ -40,28 +38,43 @@ class _HomeKuState extends State<HomeKu> {
             allRecipes.add(element.data());
           })
         });
+    setState(() {});
+    return;
   }
 
   @override
-  initState() async {
-    await getRecipes();
+  initState() {
+    getRecipes();
     setState(() {});
     super.initState();
+    return;
   }
 
-  Future<void> _chooseImage() async {
-    PickedFile pickedfile = await picker.getImage(source: ImageSource.gallery);
+  // Future<void> _chooseImage() async {
+  //   PickedFile pickedfile = await picker.getImage(source: ImageSource.gallery);
 
-    setState(() {
-      _imageFile = File(pickedfile.path);
-    });
-  }
+  //   setState(() {
+  //     _imageFile = File(pickedfile.path);
+  //   });
+  // }
 
-  void _uploadImage() {
-    String ImageFileName = DateTime.now().millisecondsSinceEpoch.toString();
+  Future<void> _uploadImage({String name, String bahan, File image}) async {
+    // String ImageFileName = DateTime.now().millisecondsSinceEpoch.toString();
+    String fileName = image.path;
     final Reference storageReference =
-        FirebaseStorage.instance.ref().child('Images').child(ImageFileName);
-    final UploadTask uploadtask = storageReference.putFile(_imageFile);
+        FirebaseStorage.instance.ref().child('Images').child(fileName);
+    final UploadTask uploadtask = storageReference.putFile(image);
+    String imageUrl = await (await uploadtask).ref.getDownloadURL();
+
+    User user = await FirebaseAuth.instance.currentUser;
+    await recipecollections.add({
+      'name': name,
+      'bahan': bahan,
+      'image': imageUrl,
+      'author': user.email
+    });
+
+    await getRecipes();
   }
 
   void showdialog(bool isUpdate, DocumentSnapshot ds) {
@@ -106,9 +119,17 @@ class _HomeKuState extends State<HomeKu> {
                     },
                     controller: _bahan,
                   ),
+                  if (_imageFile != null) Image.file(_imageFile, height: 200),
                   IconButton(
                       icon: Icon(Icons.photo_album),
-                      onPressed: pickImage(ImageSource.gallery))
+                      onPressed: () async {
+                        PickedFile pickedfile =
+                            await picker.getImage(source: ImageSource.gallery);
+
+                        setState(() {
+                          _imageFile = File(pickedfile.path);
+                        });
+                      })
                 ])),
             actions: <Widget>[
               RaisedButton(
@@ -116,13 +137,10 @@ class _HomeKuState extends State<HomeKu> {
                 onPressed: () async {
                   if (formkey.currentState.validate()) {
                     formkey.currentState.save();
-                    User user = await FirebaseAuth.instance.currentUser;
-                    await recipecollections.add({
-                      'name': _name.text,
-                      'bahan': _bahan.text,
-                      'image': "",
-                      'author': user.email
-                    });
+                    _uploadImage(
+                        name: _name.text,
+                        bahan: _bahan.text,
+                        image: _imageFile);
 
                     // if (isUpdate) {
                     //   recipecollections
@@ -246,6 +264,8 @@ class _HomeKuState extends State<HomeKu> {
                       height: 150,
                       color: Colors.grey[200],
                       child: Column(children: [
+                        if (allRecipes[home]['image'] != "")
+                          Image.network(allRecipes[home]['image'], height: 100),
                         Text("Nama : " + allRecipes[home]['name'].toString()),
                         Text("Bahan : " + allRecipes[home]['bahan'].toString()),
                       ]),

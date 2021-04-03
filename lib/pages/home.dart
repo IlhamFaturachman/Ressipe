@@ -34,8 +34,8 @@ class _HomeKuState extends State<HomeKu> {
   Future<void> getRecipes() async {
     await recipecollections.get().then((result) => {
           result.docs.forEach((element) {
-            print(element.data()['name']);
-            allRecipes.add(element.data());
+            print(element.data());
+            allRecipes.add(element);
           })
         });
     setState(() {});
@@ -50,6 +50,11 @@ class _HomeKuState extends State<HomeKu> {
     return;
   }
 
+  Future<void> _deleteRecipe({String id}) async {
+    await recipecollections.doc(id).delete();
+    await getRecipes();
+  }
+
   // Future<void> _chooseImage() async {
   //   PickedFile pickedfile = await picker.getImage(source: ImageSource.gallery);
 
@@ -58,7 +63,7 @@ class _HomeKuState extends State<HomeKu> {
   //   });
   // }
 
-  Future<void> _uploadImage({String name, String bahan, File image}) async {
+  Future<void> _addRecipe({String name, String bahan, File image}) async {
     // String ImageFileName = DateTime.now().millisecondsSinceEpoch.toString();
     String fileName = image.path;
     final Reference storageReference =
@@ -77,14 +82,44 @@ class _HomeKuState extends State<HomeKu> {
     await getRecipes();
   }
 
-  void showdialog(bool isUpdate, DocumentSnapshot ds) {
+  Future<void> _updateRecipe(
+      {String id, String name, String bahan, File image}) async {
+    // // String ImageFileName = DateTime.now().millisecondsSinceEpoch.toString();
+    if (image != null) {
+      String fileName = image.path;
+      final Reference storageReference =
+          FirebaseStorage.instance.ref().child('Images').child(fileName);
+      final UploadTask uploadtask = storageReference.putFile(image);
+      String imageUrl = await (await uploadtask).ref.getDownloadURL();
+
+      await recipecollections
+          .doc(id)
+          .update({'name': name, 'bahan': bahan, 'image': imageUrl});
+    } else {
+      await recipecollections.doc(id).update({'name': name, 'bahan': bahan});
+    }
+    await getRecipes();
+  }
+
+  // Future refreshData() async {
+  //   listData.clear();
+  //   await Future.delayed(Duration(seconds: 2));
+  //   for (var index = 0; index < 10; index++) {
+  //     var nama = 'User ${index + 1}';
+  //     var nomor = Random().nextInt(100);
+  //     listData.add(User(nama, nomor));
+  //   }
+  //   setState(() {});
+  // }
+
+  void showdialog(DocumentSnapshot ds) {
     GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: isUpdate ? Text("Update Todo") : Text("Add Recipe"),
+            title: Text("Add Recipe"),
             content: Form(
                 key: formkey,
                 autovalidate: true,
@@ -137,26 +172,112 @@ class _HomeKuState extends State<HomeKu> {
                 onPressed: () async {
                   if (formkey.currentState.validate()) {
                     formkey.currentState.save();
-                    _uploadImage(
+                    await _addRecipe(
                         name: _name.text,
                         bahan: _bahan.text,
                         image: _imageFile);
+                    await getRecipes();
+                    setState(() {});
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeKu(
+                            uid: uid,
+                          ),
+                        ));
+                  }
+                },
+                child: Text(
+                  "Add",
+                  style: TextStyle(
+                    fontFamily: "tepeno",
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+  }
 
-                    // if (isUpdate) {
-                    //   recipecollections
-                    //       .collection('recipe').doc(uid)
-                    //       .updateData({
-                    //     'name': name,
-                    //     'ingredient': ingredient,
-                    //   });
-                    // } else {
-                    //   //  insert
-                    //   recipecollections.document(uid).collection('recipe').add({
-                    //     'name': name,
-                    //     'ingredient': ingredient,
-                    //   });
-                    // }
-                    Navigator.pop(context);
+  void updateRecipe({String id, String nama, String bahan, String imageUrl}) {
+    GlobalKey<FormState> formkey = GlobalKey<FormState>();
+    TextEditingController _nameUpdate = TextEditingController(text: nama);
+    TextEditingController _bahanUpdate = TextEditingController(text: bahan);
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Add Recipe"),
+            content: Form(
+                key: formkey,
+                autovalidate: true,
+                child: Column(children: [
+                  TextFormField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Name",
+                    ),
+                    validator: (_val) {
+                      if (_val.isEmpty) {
+                        return "Can't Be Empty";
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: _nameUpdate,
+                  ),
+                  TextFormField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Bahan Bahan",
+                    ),
+                    validator: (_val) {
+                      if (_val.isEmpty) {
+                        return "Can't Be Empty";
+                      } else {
+                        return null;
+                      }
+                    },
+                    controller: _bahanUpdate,
+                  ),
+                  if (_imageFile != null) ...[
+                    Image.file(_imageFile, height: 200)
+                  ],
+                  IconButton(
+                      icon: Icon(Icons.photo_album),
+                      onPressed: () async {
+                        PickedFile pickedfile =
+                            await picker.getImage(source: ImageSource.gallery);
+
+                        setState(() {
+                          _imageFile = File(pickedfile.path);
+                        });
+                      })
+                ])),
+            actions: <Widget>[
+              RaisedButton(
+                color: Colors.purple,
+                onPressed: () async {
+                  if (formkey.currentState.validate()) {
+                    formkey.currentState.save();
+                    await _updateRecipe(
+                        id: id,
+                        name: _nameUpdate.text,
+                        bahan: _bahanUpdate.text,
+                        image: _imageFile);
+                    await getRecipes();
+                    setState(() {});
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeKu(
+                            uid: uid,
+                          ),
+                        ));
                   }
                 },
                 child: Text(
@@ -175,107 +296,127 @@ class _HomeKuState extends State<HomeKu> {
   @override
   Widget build(BuildContext context) {
     var recipesdata = recipecollections.get();
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Home",
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
-          elevation: 10,
-          backgroundColor: Colors.black,
-          actions: [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.search),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.notifications),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.more_vert),
-            ),
-          ],
-        ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              UserAccountsDrawerHeader(
-                accountName: Text('Kawand'),
-                accountEmail: Text('Kawand@gmail.com'),
-                decoration: BoxDecoration(color: Colors.blueAccent),
+    return RefreshIndicator(
+        onRefresh: () {
+          return;
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                "Home",
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ListTile(
-                  leading: Icon(Icons.account_circle),
-                  title: Text('Drawer layout Item 1'),
-                  onTap: () {
-                    //bapak
-                  },
+              elevation: 10,
+              backgroundColor: Colors.black,
+              actions: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.search),
                 ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.notifications),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.more_vert),
+                ),
+              ],
+            ),
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  UserAccountsDrawerHeader(
+                    accountName: Text('Kawand'),
+                    accountEmail: Text('Kawand@gmail.com'),
+                    decoration: BoxDecoration(color: Colors.blueAccent),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListTile(
+                      leading: Icon(Icons.account_circle),
+                      title: Text('Drawer layout Item 1'),
+                      onTap: () {
+                        //bapak
+                      },
+                    ),
+                  ),
+                  Divider(
+                    height: 10.0,
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.accessibility),
+                    title: Text('Drawer layout Item 2'),
+                    onTap: () {
+                      //Bapak
+                    },
+                  ),
+                  Divider(
+                    height: 10.0,
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.exit_to_app),
+                    title: Text('Logout'),
+                    onTap: () async {
+                      await _auth.signOut();
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => Signup()));
+                    },
+                  )
+                ],
               ),
-              Divider(
-                height: 10.0,
-              ),
-              ListTile(
-                leading: Icon(Icons.accessibility),
-                title: Text('Drawer layout Item 2'),
-                onTap: () {
-                  //Bapak
-                },
-              ),
-              Divider(
-                height: 10.0,
-              ),
-              ListTile(
-                leading: Icon(Icons.exit_to_app),
-                title: Text('Logout'),
-                onTap: () async {
-                  await _auth.signOut();
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => Signup()));
-                },
-              )
-            ],
-          ),
-        ),
-        body:
+            ),
+            body: GridView.builder(
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
+              itemBuilder: (_, home) {
+                if (home < allRecipes.length) {
+                  return Container(
+                    margin: EdgeInsets.all(10),
+                    height: 250,
+                    color: Colors.grey[200],
+                    child: Column(children: [
+                      // if (allRecipes[home].data()['image'] != "")
+                      Image.network(allRecipes[home].data()['image'],
+                          height: 100),
+                      Text("Nama : " +
+                          allRecipes[home].data()['name'].toString()),
+                      Text("Bahan : " +
+                          allRecipes[home].data()['bahan'].toString()),
+                      IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            print(allRecipes[home].data());
+                            updateRecipe(
+                                id: allRecipes[home].id,
+                                nama: allRecipes[home].data()['name'],
+                                bahan: allRecipes[home].data()['bahan'],
+                                imageUrl: allRecipes[home].data()['image']);
+                          }),
 
-            // Column(
-            //   children: [
-            //     for (var i in allRecipes)
-            //       Container(
-            //         color: Colors.yellow,
-            //         child: Text(i['name']),
-            //       )
-            //   ],
-            // ),
-
-            GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemBuilder: (_, home) {
-                  if (home < allRecipes.length) {
-                    return Container(
-                      margin: EdgeInsets.all(10),
-                      height: 150,
-                      color: Colors.grey[200],
-                      child: Column(children: [
-                        if (allRecipes[home]['image'] != "")
-                          Image.network(allRecipes[home]['image'], height: 100),
-                        Text("Nama : " + allRecipes[home]['name'].toString()),
-                        Text("Bahan : " + allRecipes[home]['bahan'].toString()),
-                      ]),
-                    );
-                  }
-                  return Text("");
-                }),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () => showdialog(false, null),
-        ));
+                      IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            _deleteRecipe(id: allRecipes[home].id);
+                            setState(() {});
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomeKu(
+                                    uid: uid,
+                                  ),
+                                ));
+                          })
+                    ]),
+                  );
+                }
+                return Text("");
+              },
+            ),
+            floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => showdialog(null),
+            )));
   }
 }

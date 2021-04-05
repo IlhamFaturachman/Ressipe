@@ -27,10 +27,9 @@ class _HomeKuState extends State<HomeKu> {
 
   final AuthService _auth = AuthService();
 
+  //Get Data
   var recipecollections = FirebaseFirestore.instance.collection('recipe');
-
   List allRecipes = [];
-
   Future<void> getRecipes() async {
     await recipecollections.get().then((result) => {
           result.docs.forEach((element) {
@@ -50,19 +49,13 @@ class _HomeKuState extends State<HomeKu> {
     return;
   }
 
+  //Delete Recipe
   Future<void> _deleteRecipe({String id}) async {
     await recipecollections.doc(id).delete();
     await getRecipes();
   }
 
-  // Future<void> _chooseImage() async {
-  //   PickedFile pickedfile = await picker.getImage(source: ImageSource.gallery);
-
-  //   setState(() {
-  //     _imageFile = File(pickedfile.path);
-  //   });
-  // }
-
+  //Add Recipe
   Future<void> _addRecipe({String name, String bahan, File image}) async {
     // String ImageFileName = DateTime.now().millisecondsSinceEpoch.toString();
     String fileName = image.path;
@@ -82,6 +75,8 @@ class _HomeKuState extends State<HomeKu> {
     await getRecipes();
   }
 
+  //Update Recipe
+
   Future<void> _updateRecipe(
       {String id, String name, String bahan, File image}) async {
     // // String ImageFileName = DateTime.now().millisecondsSinceEpoch.toString();
@@ -100,17 +95,6 @@ class _HomeKuState extends State<HomeKu> {
     }
     await getRecipes();
   }
-
-  // Future refreshData() async {
-  //   listData.clear();
-  //   await Future.delayed(Duration(seconds: 2));
-  //   for (var index = 0; index < 10; index++) {
-  //     var nama = 'User ${index + 1}';
-  //     var nomor = Random().nextInt(100);
-  //     listData.add(User(nama, nomor));
-  //   }
-  //   setState(() {});
-  // }
 
   void showdialog(DocumentSnapshot ds) {
     GlobalKey<FormState> formkey = GlobalKey<FormState>();
@@ -156,7 +140,7 @@ class _HomeKuState extends State<HomeKu> {
                   ),
                   if (_imageFile != null) Image.file(_imageFile, height: 200),
                   IconButton(
-                      icon: Icon(Icons.photo_album),
+                      icon: Icon(Icons.photo),
                       onPressed: () async {
                         PickedFile pickedfile =
                             await picker.getImage(source: ImageSource.gallery);
@@ -248,7 +232,7 @@ class _HomeKuState extends State<HomeKu> {
                     Image.file(_imageFile, height: 200)
                   ],
                   IconButton(
-                      icon: Icon(Icons.photo_album),
+                      icon: Icon(Icons.photo),
                       onPressed: () async {
                         PickedFile pickedfile =
                             await picker.getImage(source: ImageSource.gallery);
@@ -329,7 +313,7 @@ class _HomeKuState extends State<HomeKu> {
                 children: <Widget>[
                   UserAccountsDrawerHeader(
                     accountName: Text('Kawand'),
-                    accountEmail: Text('Kawand@gmail.com'),
+                    accountEmail: Text('$uid.email'.toString()),
                     decoration: BoxDecoration(color: Colors.blueAccent),
                   ),
                   Padding(
@@ -379,11 +363,17 @@ class _HomeKuState extends State<HomeKu> {
                     child: Column(children: [
                       // if (allRecipes[home].data()['image'] != "")
                       Image.network(allRecipes[home].data()['image'],
-                          height: 100),
+                          height: 150),
+                      SizedBox(height: 10),
+                      Text("Author : " +
+                          allRecipes[home].data()['author'].toString()),
+                      SizedBox(height: 10),
                       Text("Nama : " +
                           allRecipes[home].data()['name'].toString()),
+                      SizedBox(height: 10),
                       Text("Bahan : " +
                           allRecipes[home].data()['bahan'].toString()),
+                      SizedBox(height: 10),
                       IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
